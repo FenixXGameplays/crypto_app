@@ -196,15 +196,18 @@ class _ShowGraphPrices extends StatelessWidget {
     final minPrice = data.map((e) => e.y).reduce((a, b) => a < b ? a : b);
     final isUpward = data.last.y >= data.first.y;
 
+    final range = maxPrice - minPrice;
+    final interval = _getSmartInterval(range);
+
     return LineChart(
       LineChartData(
         minX: 0,
-        maxX: data.length.toDouble(),
+        maxX: data.last.x,
         minY: minPrice * 0.95,
         maxY: maxPrice * 1.05,
         gridData: FlGridData(
           show: true,
-          horizontalInterval: (maxPrice - minPrice) / 4,
+          horizontalInterval: range / 4,
           getDrawingHorizontalLine: (_) => FlLine(
             color: Colors.white.withOpacity(0.05),
             strokeWidth: 1,
@@ -218,7 +221,7 @@ class _ShowGraphPrices extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (value, _) {
                 return Text(
-                  '\$${value.toStringAsFixed(2)}',
+                  formatAbbreviated(value),
                   style: const TextStyle(color: Colors.white70, fontSize: 12),
                 );
               },
@@ -270,4 +273,23 @@ class _ShowGraphPrices extends StatelessWidget {
       ),
     );
   }
+
+  String formatAbbreviated(double number) {
+  if (number >= 1e9) return '\$${(number / 1e9).toStringAsFixed(1)}B';
+  if (number >= 1e6) return '\$${(number / 1e6).toStringAsFixed(1)}M';
+  if (number >= 1e3) return '\$${(number / 1e3).toStringAsFixed(1)}K';
+  return '\$${number.toStringAsFixed(2)}';
+}
+
+  _getSmartInterval(double range) {
+
+    if (range > 100) return 20;
+  if (range > 10) return 5;
+  if (range > 1) return 1;
+  if (range > 0.1) return 0.05;
+  if (range > 0.01) return 0.01;
+  if (range > 0.001) return 0.001;
+  return range / 4; // Por defecto, máximo 4 divisiones
+  }
+
 }
