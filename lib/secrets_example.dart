@@ -1,0 +1,1 @@
+const String coinMarketCapApiKey = 'TU_API_KEY';
