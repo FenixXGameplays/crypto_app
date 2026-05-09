@@ -15,6 +15,7 @@ class MainApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CryptoProvider())
+        
       ],
       child: MaterialApp.router(
         routerConfig: appRoute,
